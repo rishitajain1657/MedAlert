@@ -1,10 +1,10 @@
 # 🛡️ MedAlert — The Medicine Safety Detective
 > **Deciphering official drug recalls and CDSCO substandard batch notices into plain-language consumer protection via TinyFish AI Web Agents.**
 
-[[https://img.shields.io/badge/KRITICAL%20HACKS%20'26-AssetMerkle%20IGDTUW-blue]](https://github.com/)
-[[https://img.shields.io/badge/Track-AI%20%26%20Public%20Safety-emerald]](https://github.com/)
-[[https://img.shields.io/badge/Powered%20By-TinyFish%20AI%20Web%20Agent-teal]](https://www.tinyfish.ai/)
-[[https://img.shields.io/badge/Regulatory%20Data-CDSCO%20%7C%20IPC-coral]](https://cdsco.gov.in/)
+https://github.com/
+https://github.com/
+https://www.tinyfish.ai/
+https://cdsco.gov.in/
 
 ---
 
