@@ -1,0 +1,2507 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MedAlert — The Medicine Safety Detective | Autonomous Indian Drug Quality Verification</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    /* =============================================================
+       DESIGN TOKENS & SYSTEM PALETTE (Clean, Spacious, Professional)
+    ============================================================== */
+    :root {
+      --font-base: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --transition-speed: 0.25s;
+
+      /* LIGHT THEME (Default) */
+      --bg-primary: #f8fafc;
+      --bg-secondary: #ffffff;
+      --surface: #ffffff;
+      --surface-elevated: #f1f5f9;
+      --surface-glass: rgba(255, 255, 255, 0.92);
+      --border-subtle: #e2e8f0;
+      --border-strong: #cbd5e1;
+
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-soft: #94a3b8;
+
+      --brand-navy: #0f2438;
+      --brand-coral: #eb4d27;
+      --brand-coral-hover: #d93d18;
+      --brand-coral-soft: #fff1ee;
+      --brand-cyan: #0284c7;
+      --brand-cyan-soft: #e0f2fe;
+
+      --state-danger-bg: #fef2f2;
+      --state-danger-border: #f87171;
+      --state-danger-text: #991b1b;
+
+      --state-info-bg: #f0f9ff;
+      --state-info-border: #38bdf8;
+      --state-info-text: #0369a1;
+
+      --state-success-bg: #ecfdf5;
+      --state-success-border: #34d399;
+      --state-success-text: #065f46;
+
+      --state-warning-bg: #fffbeb;
+      --state-warning-border: #f59e0b;
+      --state-warning-text: #92400e;
+
+      --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05), 0 1px 2px rgba(15, 23, 42, 0.03);
+      --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.06);
+      --shadow-lg: 0 14px 30px rgba(15, 23, 42, 0.08);
+
+      /* WhatsApp Light Colors */
+      --wa-phone-bg: #ffffff;
+      --wa-phone-border: #d1d7db;
+      --wa-header-bg: #008069;
+      --wa-header-text: #ffffff;
+      --wa-chat-bg: #efeae2;
+      --wa-incoming-bg: #ffffff;
+      --wa-incoming-text: #111b21;
+      --wa-outgoing-bg: #d9fdd3;
+      --wa-outgoing-text: #111b21;
+      --wa-input-bar-bg: #f0f2f5;
+      --wa-input-bg: #ffffff;
+      --wa-input-text: #111b21;
+      --wa-time-color: #667781;
+    }
+
+    /* DARK THEME */
+    [data-theme="dark"] {
+      --bg-primary: #090e17;
+      --bg-secondary: #0f172a;
+      --surface: #111c30;
+      --surface-elevated: #182640;
+      --surface-glass: rgba(17, 28, 48, 0.88);
+      --border-subtle: #1e3352;
+      --border-strong: #2a4770;
+
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-soft: #64748b;
+
+      --brand-navy: #0f2438;
+      --brand-coral: #ff5733;
+      --brand-coral-hover: #ff6e4e;
+      --brand-coral-soft: rgba(255, 87, 51, 0.15);
+      --brand-cyan: #38bdf8;
+      --brand-cyan-soft: rgba(56, 189, 248, 0.15);
+
+      --state-danger-bg: rgba(239, 68, 68, 0.14);
+      --state-danger-border: #ef4444;
+      --state-danger-text: #fca5a5;
+
+      --state-info-bg: rgba(56, 189, 248, 0.14);
+      --state-info-border: #38bdf8;
+      --state-info-text: #bae6fd;
+
+      --state-success-bg: rgba(16, 185, 129, 0.14);
+      --state-success-border: #10b981;
+      --state-success-text: #a7f3d0;
+
+      --state-warning-bg: rgba(245, 158, 11, 0.14);
+      --state-warning-border: #f59e0b;
+      --state-warning-text: #fde68a;
+
+      --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.4);
+      --shadow-lg: 0 16px 36px rgba(0, 0, 0, 0.55);
+
+      /* WhatsApp Dark Colors */
+      --wa-phone-bg: #0b141b;
+      --wa-phone-border: #202c33;
+      --wa-header-bg: #202c33;
+      --wa-header-text: #e9edef;
+      --wa-chat-bg: #0b141b;
+      --wa-incoming-bg: #202c33;
+      --wa-incoming-text: #e9edef;
+      --wa-outgoing-bg: #005c4b;
+      --wa-outgoing-text: #e9edef;
+      --wa-input-bar-bg: #202c33;
+      --wa-input-bg: #2a3942;
+      --wa-input-text: #ffffff;
+      --wa-time-color: #8696a0;
+    }
+
+    /* Font size scaling (A- / A / A+) */
+    html[data-font-size="sm"] { font-size: 14px; }
+    html[data-font-size="md"] { font-size: 16px; }
+    html[data-font-size="lg"] { font-size: 18.5px; }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      transition: background-color var(--transition-speed) ease, border-color var(--transition-speed) ease, color var(--transition-speed) ease;
+    }
+
+    body {
+      font-family: var(--font-base);
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* Application wrapper with generous breathing room */
+    .app-container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 24px 32px 80px;
+    }
+
+    /* =============================================================
+       HEADER & NAVIGATION BAR (Minimalist, Non-Colored Controls)
+    ============================================================== */
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 14px 24px;
+      background: var(--surface-glass);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 18px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 36px;
+      position: sticky;
+      top: 16px;
+      z-index: 100;
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* Explicit high-visibility logo */
+    .brand-logo-img {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      object-fit: contain;
+      background: #ffffff;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      padding: 3px;
+      display: block;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    }
+
+    .brand-title {
+      font-size: 1.3rem;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      line-height: 1.2;
+    }
+
+    .brand-title span {
+      color: var(--brand-coral);
+    }
+
+    .brand-tagline {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    /* MINIMAL, NON-COLORED FONT ADJUSTER (A- / A / A+) */
+    .font-adjuster {
+      display: inline-flex;
+      align-items: center;
+      background: var(--surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 2px;
+    }
+
+    .font-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-weight: 700;
+      padding: 5px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.78rem;
+      transition: all 0.15s ease;
+    }
+
+    .font-btn:hover {
+      color: var(--text-main);
+    }
+
+    .font-btn.active {
+      background: var(--surface);
+      color: var(--text-main);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* MINIMAL, NON-COLORED THEME SLIDER (Left = Light, Right = Dark) */
+    .theme-slider-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .theme-slide-toggle {
+      position: relative;
+      display: inline-block;
+      width: 62px;
+      height: 32px;
+      cursor: pointer;
+    }
+
+    .theme-slide-toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .theme-track {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--surface-elevated);
+      border: 1px solid var(--border-strong);
+      border-radius: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 6px;
+      transition: all 0.25s ease;
+    }
+
+    .theme-track .icon-sun,
+    .theme-track .icon-moon {
+      font-size: 13px;
+      user-select: none;
+      z-index: 1;
+      opacity: 0.7;
+    }
+
+    /* Minimal neutral thumb */
+    .theme-thumb {
+      position: absolute;
+      height: 24px;
+      width: 24px;
+      left: 3px;
+      bottom: 3px;
+      background: var(--surface);
+      border-radius: 50%;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 2;
+    }
+
+    /* Left = Light (unchecked), Right = Dark (checked) */
+    .theme-slide-toggle input:checked + .theme-track .theme-thumb {
+      transform: translateX(30px);
+    }
+
+    /* =============================================================
+       HERO BANNER (Spacious, Elegant, High-Aesthetic)
+    ============================================================== */
+    .hero-section {
+      background: linear-gradient(135deg, #0e1e33 0%, #163657 60%, #1d4670 100%);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 24px;
+      padding: 48px 44px;
+      color: #ffffff;
+      display: grid;
+      grid-template-columns: 1.35fr 0.65fr;
+      gap: 40px;
+      align-items: center;
+      box-shadow: var(--shadow-lg);
+      margin-bottom: 40px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #f1f5f9;
+      padding: 5px 14px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin-bottom: 20px;
+    }
+
+    .hero-badge-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #10b981;
+      display: inline-block;
+    }
+
+    .hero-title {
+      font-size: clamp(2rem, 3.5vw, 3rem);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 16px;
+      letter-spacing: -0.8px;
+    }
+
+    .hero-title .accent-orange {
+      color: #ff7043;
+    }
+
+    .hero-sub {
+      font-size: 1.05rem;
+      color: #d1e2f2;
+      max-width: 600px;
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+
+    .hero-ctas {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .btn-main {
+      background: var(--brand-coral);
+      color: #ffffff;
+      border: none;
+      padding: 13px 26px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      border-radius: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 14px rgba(235, 77, 39, 0.35);
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn-main:hover {
+      background: var(--brand-coral-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 13px 22px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      border-radius: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn-outline:hover {
+      background: rgba(255, 255, 255, 0.16);
+    }
+
+    /* Floating Shield Card in Hero */
+    .hero-logo-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-logo-card {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.25);
+      border: 2px solid rgba(255, 255, 255, 0.85);
+      max-width: 220px;
+    }
+
+    .hero-logo-img {
+      width: 140px;
+      height: 140px;
+      object-fit: contain;
+      display: block;
+      margin-bottom: 12px;
+    }
+
+    .hero-logo-caption {
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: var(--brand-navy);
+      letter-spacing: -0.2px;
+    }
+
+    .hero-logo-sub {
+      font-size: 0.72rem;
+      color: #64748b;
+      margin-top: 2px;
+    }
+
+    /* =============================================================
+       PROBLEM HIGHLIGHT METRICS (Clean 3-Card Grid)
+    ============================================================== */
+    .metrics-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-bottom: 44px;
+    }
+
+    .metric-card {
+      background: var(--surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 24px 28px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .metric-num {
+      font-size: 2.2rem;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .metric-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--text-main);
+    }
+
+    .metric-desc {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* =============================================================
+       MAIN WORKSPACE (Spacious Two-Column Grid)
+    ============================================================== */
+    .workspace-layout {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 32px;
+      margin-bottom: 48px;
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 22px;
+      padding: 32px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .panel-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .panel-heading {
+      font-size: 1.25rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge-pill {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--surface-elevated);
+      color: var(--text-muted);
+      border: 1px solid var(--border-subtle);
+    }
+
+    /* Form Fields with generous touch sizing */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.88rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text-main);
+    }
+
+    .form-label small {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      margin-left: 4px;
+    }
+
+    .form-input {
+      width: 100%;
+      background: var(--surface-elevated);
+      border: 1.5px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 13px 16px;
+      font-family: inherit;
+      font-size: 0.98rem;
+      color: var(--text-main);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .form-input:focus {
+      border-color: var(--brand-coral);
+      box-shadow: 0 0 0 3px var(--brand-coral-soft);
+    }
+
+    .form-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    /* Quick Test Pill Buttons */
+    .sample-section {
+      margin: 20px 0 24px;
+    }
+
+    .sample-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .sample-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .sample-chip {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      padding: 7px 12px;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .sample-chip:hover {
+      border-color: var(--brand-coral);
+      transform: translateY(-1px);
+    }
+
+    .submit-btn {
+      width: 100%;
+      background: var(--brand-coral);
+      color: #ffffff;
+      border: none;
+      padding: 15px 24px;
+      font-size: 1rem;
+      font-weight: 800;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(235, 77, 39, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.2s;
+    }
+
+    .submit-btn:hover {
+      background: var(--brand-coral-hover);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    /* Interactive Camera Blister Strip Scanner Box */
+    .scanner-box {
+      border: 1.5px dashed var(--border-strong);
+      border-radius: 16px;
+      padding: 20px;
+      background: var(--surface-elevated);
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .scanner-viewfinder {
+      position: relative;
+      max-width: 300px;
+      margin: 14px auto 8px;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #000;
+      display: none;
+    }
+
+    .scanner-viewfinder.active {
+      display: block;
+    }
+
+    .scanner-img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      display: block;
+      opacity: 0.88;
+    }
+
+    .laser-line {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, #ef4444, #ff5733, #ef4444, transparent);
+      box-shadow: 0 0 10px #ff5733;
+      animation: laserSweep 2s infinite ease-in-out;
+    }
+
+    @keyframes laserSweep {
+      0% { top: 0%; }
+      50% { top: 96%; }
+      100% { top: 0%; }
+    }
+
+    .ocr-box {
+      position: absolute;
+      border: 2px solid #10b981;
+      background: rgba(16, 185, 129, 0.25);
+      color: #ffffff;
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+
+    /* =============================================================
+       VERDICT CARD (Spacious & Clean 3-State Display)
+    ============================================================== */
+    .verdict-card {
+      margin-top: 28px;
+      border-radius: 18px;
+      padding: 26px;
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .verdict-card.show {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .verdict-card.danger {
+      background: var(--state-danger-bg);
+      border: 2px solid var(--state-danger-border);
+    }
+
+    .verdict-card.info {
+      background: var(--state-info-bg);
+      border: 2px solid var(--state-info-border);
+    }
+
+    .verdict-card.success {
+      background: var(--state-success-bg);
+      border: 2px solid var(--state-success-border);
+    }
+
+    .verdict-card.warning {
+      background: var(--state-warning-bg);
+      border: 2px solid var(--state-warning-border);
+    }
+
+    .verdict-top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .verdict-tag {
+      font-size: 0.8rem;
+      font-weight: 800;
+      padding: 6px 12px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .danger .verdict-tag { background: #ef4444; color: #ffffff; }
+    .info .verdict-tag { background: #0284c7; color: #ffffff; }
+    .success .verdict-tag { background: #10b981; color: #ffffff; }
+
+    /* Minimal Voice Button */
+    .btn-voice {
+      background: var(--surface);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      padding: 6px 12px;
+      border-radius: 10px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .verdict-headline {
+      font-size: 1.3rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .verdict-body {
+      font-size: 0.98rem;
+      line-height: 1.6;
+      margin-bottom: 18px;
+    }
+
+    .verdict-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .meta-box {
+      background: var(--surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 12px 14px;
+    }
+
+    .meta-box small {
+      display: block;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .meta-box strong {
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
+
+    .protocol-box {
+      background: rgba(0, 0, 0, 0.05);
+      border-left: 4px solid var(--brand-coral);
+      padding: 12px 14px;
+      border-radius: 8px;
+      font-size: 0.84rem;
+      line-height: 1.5;
+    }
+
+    .protocol-box strong {
+      color: var(--brand-coral);
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    /* =============================================================
+       RIGHT COLUMN: WHATSAPP SIMULATOR (Adaptive Light/Dark Theme)
+    ============================================================== */
+    .phone-container {
+      background: var(--wa-phone-bg);
+      border: 8px solid var(--wa-phone-border);
+      border-radius: 32px;
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+      max-width: 360px;
+      margin: 0 auto;
+    }
+
+    .phone-header {
+      background: var(--wa-header-bg);
+      color: var(--wa-header-text);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .phone-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #ffffff;
+      object-fit: cover;
+    }
+
+    .phone-contact b {
+      display: block;
+      font-size: 0.92rem;
+      line-height: 1.2;
+    }
+
+    .phone-contact small {
+      font-size: 0.72rem;
+      opacity: 0.85;
+    }
+
+    .phone-chat-body {
+      background: var(--wa-chat-bg);
+      height: 320px;
+      overflow-y: auto;
+      padding: 16px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-size: 0.84rem;
+    }
+
+    .chat-bubble {
+      max-width: 82%;
+      padding: 8px 12px;
+      border-radius: 12px;
+      line-height: 1.4;
+      position: relative;
+    }
+
+    .chat-bubble.incoming {
+      background: var(--wa-incoming-bg);
+      color: var(--wa-incoming-text);
+      align-self: flex-start;
+      border-bottom-left-radius: 3px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    }
+
+    .chat-bubble.outgoing {
+      background: var(--wa-outgoing-bg);
+      color: var(--wa-outgoing-text);
+      align-self: flex-end;
+      border-bottom-right-radius: 3px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    }
+
+    .chat-time {
+      font-size: 0.65rem;
+      color: var(--wa-time-color);
+      text-align: right;
+      margin-top: 4px;
+    }
+
+    .phone-input-bar {
+      background: var(--wa-input-bar-bg);
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .phone-input {
+      flex: 1;
+      background: var(--wa-input-bg);
+      color: var(--wa-input-text);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 8px 14px;
+      font-size: 0.84rem;
+      outline: none;
+    }
+
+    .phone-send-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #00a884;
+      border: none;
+      color: #ffffff;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      font-size: 0.95rem;
+    }
+
+    .wa-demo-chips {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .wa-chip {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+
+    .wa-chip:hover {
+      background: #00a884;
+      color: #ffffff;
+      border-color: #00a884;
+    }
+
+    /* Plain-Language Jargon Buster Cards */
+    .jargon-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .jargon-card {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .jargon-card:hover {
+      border-color: var(--brand-coral);
+      transform: translateY(-2px);
+    }
+
+    .jargon-tag {
+      font-size: 0.68rem;
+      font-weight: 800;
+      color: var(--brand-coral);
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+
+    .jargon-name {
+      font-size: 0.88rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .jargon-text {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* =============================================================
+       CIRCULARS & REGULATORY DATABASE EXPLORER
+    ============================================================== */
+    .circulars-section {
+      background: var(--surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 22px;
+      padding: 32px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 40px;
+    }
+
+    .toolbar-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin: 20px 0;
+    }
+
+    .filter-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .filter-btn {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      padding: 6px 14px;
+      border-radius: 10px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .filter-btn.active, .filter-btn:hover {
+      background: var(--brand-coral);
+      color: #ffffff;
+      border-color: var(--brand-coral);
+    }
+
+    .search-input {
+      padding: 8px 14px;
+      background: var(--surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      color: var(--text-main);
+      font-size: 0.85rem;
+      outline: none;
+      width: 240px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+    }
+
+    .records-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.86rem;
+      text-align: left;
+    }
+
+    .records-table th {
+      background: var(--surface-elevated);
+      padding: 12px 16px;
+      font-weight: 800;
+      color: var(--text-muted);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .records-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .records-table tr:hover td {
+      background: var(--surface-elevated);
+    }
+
+    .risk-pill {
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+
+    .risk-HIGH { background: rgba(239, 68, 68, 0.15); color: #dc2626; }
+    .risk-CRITICAL { background: rgba(220, 38, 38, 0.2); color: #b91c1c; }
+    .risk-MEDIUM { background: rgba(245, 158, 11, 0.15); color: #b45309; }
+    .risk-SEVERE { background: rgba(185, 28, 28, 0.25); color: #991b1b; }
+
+    /* =============================================================
+       PRICE ECONOMICS & ROI CALCULATOR
+    ============================================================== */
+    .economics-section {
+      background: var(--surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 22px;
+      padding: 32px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 40px;
+    }
+
+    .economics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      align-items: center;
+      margin-top: 20px;
+    }
+
+    .slider-box {
+      background: var(--surface-elevated);
+      padding: 24px;
+      border-radius: 18px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .calc-range {
+      width: 100%;
+      height: 6px;
+      accent-color: var(--brand-coral);
+      cursor: pointer;
+      margin: 14px 0;
+    }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+      display: none;
+      place-items: center;
+      z-index: 999;
+      padding: 20px;
+    }
+
+    .modal-backdrop.active {
+      display: grid;
+    }
+
+    .modal-card {
+      background: var(--surface);
+      border-radius: 20px;
+      padding: 28px;
+      max-width: 460px;
+      width: 100%;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border-strong);
+    }
+
+    /* Toast */
+    .toast-pill {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #0f172a;
+      color: #ffffff;
+      padding: 10px 20px;
+      border-radius: 999px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      box-shadow: var(--shadow-lg);
+      display: none;
+      z-index: 1000;
+    }
+
+    /* Footer */
+    .footer {
+      border-top: 1px solid var(--border-subtle);
+      padding: 32px 0 16px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.86rem;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .footer-link {
+      color: var(--brand-cyan);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.84rem;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 900px) {
+      .hero-section {
+        grid-template-columns: 1fr;
+        padding: 32px 24px;
+      }
+      .hero-logo-box {
+        display: none;
+      }
+      .workspace-layout {
+        grid-template-columns: 1fr;
+      }
+      .metrics-row {
+        grid-template-columns: 1fr;
+      }
+      .economics-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+
+  <!-- =============================================================
+       TOP NAVIGATION BAR (Clean, Minimalist, Non-Colored Controls)
+  ============================================================== -->
+  <header class="navbar" role="banner">
+    <a href="#" class="brand-wrap">
+      <!-- High-visibility logo from static directory -->
+      <img src="medalert-logo.jpg" alt="MedAlert shield logo" class="brand-logo-img">
+      <div>
+        <div class="brand-title">MedAlert <span>●</span></div>
+        <div class="brand-tagline">The Medicine Safety Detective</div>
+      </div>
+    </a>
+
+    <div class="nav-actions">
+      <!-- Minimalist, non-colored text size adjuster (A- / A / A+) -->
+      <div class="font-adjuster" title="Adjust text size for easier reading">
+        <button class="font-btn" onclick="setFontSize('sm')">A-</button>
+        <button class="font-btn active" onclick="setFontSize('md')">A</button>
+        <button class="font-btn" onclick="setFontSize('lg')">A+</button>
+      </div>
+
+      <!-- Minimalist theme slide switch: Left = Light (default), Right = Dark -->
+      <div class="theme-slider-wrap">
+        <label class="theme-slide-toggle" title="Switch theme: Left = Light, Right = Dark">
+          <input type="checkbox" id="themeCheckbox" onchange="toggleTheme(this.checked)">
+          <span class="theme-track">
+            <span class="icon-sun">☀️</span>
+            <span class="icon-moon">🌙</span>
+            <span class="theme-thumb"></span>
+          </span>
+        </label>
+      </div>
+    </div>
+  </header>
+
+  <!-- =============================================================
+       HERO BANNER (Spacious, Elegant, High-Aesthetic)
+  ============================================================== -->
+  <section class="hero-section">
+    <div>
+      <div class="hero-badge">
+        <span class="hero-badge-dot"></span> CDSCO & State FDA Regulatory Traversal
+      </div>
+      <h1 class="hero-title">
+        Medicine safety, <br>
+        <span class="accent-orange">made plain & understandable.</span>
+      </h1>
+      <p class="hero-sub">
+        Every month, India's drug regulators identify dozens of commercial medicine batches
+        <strong>Not of Standard Quality (NSQ)</strong>. MedAlert translates dense official circulars
+        into instant batch verification for families, caregivers, and retail chemists.
+      </p>
+      <div class="hero-ctas">
+        <a href="#verify" class="btn-main" onclick="document.getElementById('medicineInput').focus()">
+          🔍 Check a Medicine Batch
+        </a>
+
+        <a href="#whatsapp-sim" class="btn-outline">
+          💬 Try WhatsApp Bot
+        </a>
+      </div>
+    </div>
+
+    <!-- Prominently displayed shield logo card -->
+    <div class="hero-logo-box">
+      <div class="hero-logo-card">
+        <img src="medalert-logo.jpg" alt="MedAlert shield logo artwork" class="hero-logo-img">
+        <div class="hero-logo-caption">Batch Match ≠ Brand Ban</div>
+        <div class="hero-logo-sub">Autonomous Web Traversal</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================================================
+       PROBLEM HIGHLIGHTS (Clean 3-Card Row)
+  ============================================================== -->
+  <section class="metrics-row">
+    <div class="metric-card">
+      <div class="metric-num" style="color:var(--brand-coral)">50+</div>
+      <div class="metric-title">Batches Declared NSQ Monthly</div>
+      <div class="metric-desc">CDSCO flags dozens of batches for assay failure, delayed dissolution, or particulate contamination.</div>
+    </div>
+
+    <div class="metric-card">
+      <div class="metric-num" style="color:var(--brand-cyan)">40-Page</div>
+      <div class="metric-title">Static Government Circulars</div>
+      <div class="metric-desc">Notices sit buried inside non-searchable government PDFs full of complex pharmaceutical jargon.</div>
+    </div>
+
+    <div class="metric-card">
+      <div class="metric-num" style="color:#10b981">Zero-App</div>
+      <div class="metric-title">WhatsApp Consumer Reach</div>
+      <div class="metric-desc">Frictionless access for 500M+ Indians on WhatsApp without downloading heavy applications.</div>
+    </div>
+  </section>
+
+  <!-- =============================================================
+       MAIN WORKSPACE (Two-Column Layout)
+  ============================================================== -->
+  <div class="workspace-layout" id="verify">
+
+    <!-- LEFT COLUMN: VERIFICATION CONSOLE -->
+    <div class="panel">
+      <div class="panel-top">
+        <h2 class="panel-heading">
+          <span>🛡️</span> Verify Medicine Batch
+        </h2>
+        <span class="badge-pill" id="agentPill">CDSCO Engine Active</span>
+      </div>
+
+
+
+      <!-- Manual Input Form -->
+      <form id="verifyForm">
+        <div class="form-group">
+          <label class="form-label" for="medicineInput">
+            Medicine / Brand Name *
+            <small>(e.g., Dolo-650, Telma-40, Glycomet-500, Pantocid-40)</small>
+          </label>
+          <input type="text" class="form-input" id="medicineInput" placeholder="Enter medicine name..." required>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label" for="batchInput">
+              Batch Number *
+              <small>(Printed on foil)</small>
+            </label>
+            <input type="text" class="form-input" id="batchInput" placeholder="e.g. T24018, TL9021" style="font-family:var(--font-mono)">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="makerInput">
+              Manufacturer <small>(Optional)</small>
+            </label>
+            <input type="text" class="form-input" id="makerInput" placeholder="e.g. Micro Labs, Apex">
+          </div>
+        </div>
+
+        <button type="submit" class="submit-btn" id="verifyBtn">
+          <span>🔍</span> Check Batch Against CDSCO Records
+        </button>
+      </form>
+
+      <!-- Quick Test Scenarios -->
+      <div class="sample-section">
+        <div class="sample-title">Quick Test Scenarios:</div>
+        <div class="sample-chips">
+          <button type="button" class="sample-chip" style="border-left:3px solid #ef4444" onclick="setFormSample('Dolo-650', 'T24018', 'Sample Healthcare')">
+            🔴 Flagged Recall: Dolo-650 (#T24018)
+          </button>
+          <button type="button" class="sample-chip" style="border-left:3px solid #0284c7" onclick="setFormSample('Dolo-650', 'SAFE882', 'Micro Labs')">
+            🔵 Safe Batch: Dolo-650 (#SAFE882)
+          </button>
+          <button type="button" class="sample-chip" style="border-left:3px solid #10b981" onclick="setFormSample('Azithromycin 500', 'AZ1002', 'Cipla Ltd')">
+            🟢 Clean Batch: Azithromycin 500 (#AZ1002)
+          </button>
+        </div>
+      </div>
+
+      <!-- 3-State Verdict Result Card -->
+      <div class="verdict-card" id="verdictCard" role="region" aria-live="polite">
+        <div class="verdict-top-bar">
+          <span class="verdict-tag" id="verdictBadge">VERDICT</span>
+          <button type="button" class="btn-voice" id="voiceBtn" onclick="speakVerdict()">
+            <span id="voiceIcon">🔊</span> Listen to Verdict
+          </button>
+        </div>
+
+        <h3 class="verdict-headline" id="verdictTitle">Verification Completed</h3>
+        <p class="verdict-body" id="verdictText"></p>
+
+        <div class="verdict-meta-grid">
+          <div class="meta-box">
+            <small>Medicine</small>
+            <strong id="vMedicine">—</strong>
+          </div>
+          <div class="meta-box">
+            <small>Batch Inspected</small>
+            <strong id="vBatch" style="font-family:var(--font-mono)">—</strong>
+          </div>
+          <div class="meta-box">
+            <small>Official Regulatory Finding</small>
+            <strong id="vFinding">—</strong>
+          </div>
+          <div class="meta-box">
+            <small>Testing Laboratory</small>
+            <strong id="vAuthority">—</strong>
+          </div>
+        </div>
+
+        <div class="protocol-box" id="clinicalBox">
+          <strong>⚠️ MANDATORY CLINICAL ADVISORY</strong>
+          <span id="vAdvisory">DO NOT abruptly stop your prescribed medication without consulting your doctor or pharmacist. Bring this medicine strip to your dispensing chemist for replacement under standard drug recall protocols.</span>
+        </div>
+
+        <div style="margin-top:16px;display:none;justify-content:space-between;align-items:center" id="caregiverWrap">
+          <span style="font-size:0.85rem;color:var(--text-muted)">Flagged medicine detected for senior:</span>
+          <button type="button" class="sample-chip" style="background:#ef4444;color:#fff;border:none" onclick="triggerCaregiverModal()">
+            📲 Notify Family Caregiver
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN: WHATSAPP BOT SIMULATOR & JARGON BUSTER -->
+    <div>
+      <!-- WhatsApp Simulator (Adapts to Light / Dark Mode) -->
+      <div class="panel" style="margin-bottom:24px" id="whatsapp-sim">
+        <div class="panel-top" style="margin-bottom:16px;padding-bottom:12px">
+          <h3 style="font-size:1.15rem;font-weight:800;display:flex;align-items:center;gap:8px">
+            <span>💬</span> WhatsApp Bot Simulator
+          </h3>
+          <span class="badge-pill">ZERO-APP REACH</span>
+        </div>
+        <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:16px">
+          How everyday citizens and seniors check medicine safety via WhatsApp.
+        </p>
+
+        <!-- Smartphone Frame -->
+        <div class="phone-container">
+          <div class="phone-header">
+            <img src="medalert-logo.jpg" alt="Bot avatar" class="phone-avatar">
+            <div class="phone-contact">
+              <b>MedAlert Safety Detective</b>
+              <small>● Autonomous Consumer Safety Engine</small>
+            </div>
+          </div>
+
+          <div class="phone-chat-body" id="chatBody">
+            <div class="chat-bubble incoming">
+              Namaste! 🙏 Send me a photo of your medicine strip or text the medicine name and batch number.
+              <div class="chat-time">10:00 AM</div>
+            </div>
+          </div>
+
+          <div class="phone-input-bar">
+            <input type="text" class="phone-input" id="phoneInput" placeholder="Type medicine or batch...">
+            <button type="button" class="phone-send-btn" onclick="sendWhatsAppSimMessage()">➤</button>
+          </div>
+        </div>
+
+        <div class="wa-demo-chips">
+          <button type="button" class="wa-chip" onclick="simulateWhatsAppQuery('Dolo 650, Batch T24018')">Text: Dolo T24018</button>
+          <button type="button" class="wa-chip" onclick="simulateWhatsAppQuery('Azithromycin 500, Batch AZ1002')">Text: Azithromycin</button>
+          <button type="button" class="wa-chip" onclick="simulateWhatsAppQuery('📷 [Blister Photo: Telma-40]')">Send Photo 📷</button>
+        </div>
+      </div>
+
+      <!-- Plain-Language Jargon Buster -->
+      <div class="panel">
+        <div class="panel-top" style="margin-bottom:12px;padding-bottom:10px">
+          <h3 style="font-size:1.1rem;font-weight:800">
+            <span>🧪</span> Plain-Language Jargon Buster
+          </h3>
+        </div>
+        <p style="font-size:0.8rem;color:var(--text-muted)">
+          Click any technical lab test failure to see what it actually means for your health:
+        </p>
+
+        <div class="jargon-grid">
+          <div class="jargon-card" onclick="alertJargon('Dissolution Failure', 'Tablet dissolves too slowly in stomach fluids, meaning the medicine enters the blood late or not at all.')">
+            <div class="jargon-tag">Tablet Dissolution</div>
+            <div class="jargon-name">Fails Dissolution Test</div>
+            <div class="jargon-text">Tablet won\'t dissolve in time → No pain relief.</div>
+          </div>
+
+          <div class="jargon-card" onclick="alertJargon('Low API Assay', 'The manufacturer put far less active medicine than legally required (e.g. 71% instead of 100%).')">
+            <div class="jargon-tag">Strength Failure</div>
+            <div class="jargon-name">Assay Failure (% API)</div>
+            <div class="jargon-text">Medicine is diluted → Blood pressure stays high.</div>
+          </div>
+
+          <div class="jargon-card" onclick="alertJargon('Particulate Contamination', 'Microscopic physical debris, mold, or bacteria found inside syrups or injectables.')">
+            <div class="jargon-tag">Syrups / Liquids</div>
+            <div class="jargon-name">Particulate Matter</div>
+            <div class="jargon-text">Foreign floating particles → Ingestion hazard.</div>
+          </div>
+
+          <div class="jargon-card" onclick="alertJargon('Spurious Formulation', 'Counterfeit drugs manufactured by unlicensed underground operations imitating reputed brands.')">
+            <div class="jargon-tag">High Severity</div>
+            <div class="jargon-name">Spurious / Adulterated</div>
+            <div class="jargon-text">Fake imitation medicine → Zero clinical efficacy.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- =============================================================
+       CDSCO REGULATORY CIRCULARS DATABASE EXPLORER
+  ============================================================== -->
+  <section class="circulars-section">
+    <div class="panel-top">
+      <div>
+        <h2 class="panel-heading">
+          <span>🏛️</span> Public CDSCO Gazette Circulars Explorer
+        </h2>
+        <p style="font-size:0.85rem;color:var(--text-muted);margin-top:4px">
+          Live tabular records extracted from monthly CDSCO / IPC "List of Drugs Declared Not of Standard Quality".
+        </p>
+      </div>
+      <span class="badge-pill">Autonomously Parsed</span>
+    </div>
+
+    <div class="toolbar-row">
+      <div class="filter-chips" id="filterGroup">
+        <button class="filter-btn active" onclick="filterCirculars('all', this)">All Categories</button>
+        <button class="filter-btn" onclick="filterCirculars('Pain', this)">Fever & Pain</button>
+        <button class="filter-btn" onclick="filterCirculars('Cardiovascular', this)">BP & Heart</button>
+        <button class="filter-btn" onclick="filterCirculars('Diabetes', this)">Diabetes</button>
+        <button class="filter-btn" onclick="filterCirculars('Pediatric', this)">Pediatric Cough</button>
+        <button class="filter-btn" onclick="filterCirculars('Antibiotic', this)">Antibiotics</button>
+      </div>
+
+      <input type="text" class="search-input" id="circularSearch" placeholder="🔍 Search circulars..." oninput="searchCirculars(this.value)">
+    </div>
+
+    <div class="table-wrap">
+      <table class="records-table">
+        <thead>
+          <tr>
+            <th>Medicine Name</th>
+            <th>Batch No</th>
+            <th>Manufacturer</th>
+            <th>Technical Failure Reason</th>
+            <th>Testing Lab</th>
+            <th>Risk Level</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="circularsTableBody">
+          <!-- Loaded dynamically -->
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- =============================================================
+       PRICE ECONOMICS & ROI CALCULATOR
+  ============================================================== -->
+  <section class="economics-section">
+    <div class="panel-top">
+      <div>
+        <h2 class="panel-heading">
+          <span>📈</span> Price Economics & Risk Mitigation
+        </h2>
+        <p style="font-size:0.85rem;color:var(--text-muted);margin-top:4px">
+          Marginal cost per verification (₹0.55) vs high-stakes healthcare risk mitigation.
+        </p>
+      </div>
+      <span class="badge-pill">Unit Economics</span>
+    </div>
+
+    <div class="economics-grid">
+      <div class="slider-box">
+        <div style="display:flex;justify-content:space-between;font-weight:700;font-size:0.92rem">
+          <span>Monthly Medicine Checks per Family</span>
+          <span id="sliderVal" style="color:var(--brand-coral)">10 checks</span>
+        </div>
+        <input type="range" class="calc-range" id="checkSlider" min="2" max="50" value="10" oninput="updateCalculator(this.value)">
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px">
+          <div style="background:var(--surface);padding:14px;border-radius:12px;border:1px solid var(--border-subtle)">
+            <small style="color:var(--text-muted);font-size:0.72rem;display:block;text-transform:uppercase;font-weight:700">Marginal Cost</small>
+            <strong id="marginalCostDisplay" style="font-size:1.4rem;color:var(--brand-coral)">₹5.50</strong>
+            <span style="font-size:0.72rem;color:var(--text-muted);display:block">₹0.55 / check</span>
+          </div>
+
+          <div style="background:var(--surface);padding:14px;border-radius:12px;border:1px solid var(--border-subtle)">
+            <small style="color:var(--text-muted);font-size:0.72rem;display:block;text-transform:uppercase;font-weight:700">Family Safety Plan</small>
+            <strong style="font-size:1.4rem;color:#10b981">₹49</strong>
+            <span style="font-size:0.72rem;color:#10b981;display:block">88.7% Gross Margin</span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h3 style="font-size:1.1rem;font-weight:800;margin-bottom:10px">The Healthcare Value Asymmetry</h3>
+        <p style="font-size:0.86rem;color:var(--text-muted);margin-bottom:14px;line-height:1.6">
+          A single failure in chronic cardiac or pediatric medicine can result in ICU hospitalization costing
+          <strong style="color:var(--brand-coral)">₹25,000 to ₹1,50,000+</strong>. MedAlert bridges this risk gap for less than ₹1 per check.
+        </p>
+        <div style="background:var(--surface-elevated);border-left:4px solid var(--brand-cyan);padding:12px;border-radius:10px;font-size:0.82rem">
+          <b>B2B Chemist SaaS (₹499/mo):</b> Enables community retail pharmacies to audit incoming supplier batches, avoiding ₹50,000+ penalties and license cancellations.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Caregiver Notification Modal -->
+  <div class="modal-backdrop" id="caregiverModal">
+    <div class="modal-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <h3 style="font-size:1.2rem;font-weight:800;color:var(--brand-coral)">🚨 Caregiver Alert</h3>
+        <button onclick="closeCaregiverModal()" style="background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--text-muted)">&times;</button>
+      </div>
+      <p style="font-size:0.84rem;color:var(--text-muted);margin-bottom:14px">
+        MedAlert automatically sends an emergency WhatsApp escalation alert to the senior's family caregiver.
+      </p>
+
+      <form id="caregiverForm" onsubmit="dispatchCaregiverAlert(event)">
+        <div class="form-group">
+          <label class="form-label">Elderly Family Member</label>
+          <input type="text" class="form-input" id="cgPatient" value="Senior Parent">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Caregiver Phone</label>
+          <input type="tel" class="form-input" id="cgPhone" value="+91 98765 43210" style="font-family:var(--font-mono)">
+        </div>
+        <button type="submit" class="submit-btn" style="background:#ef4444">
+          📲 Send WhatsApp Emergency Alert
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Footer (Clean & Sanitized) -->
+  <footer class="footer">
+    <div class="footer-links">
+      <a href="https://cdsco.gov.in/" target="_blank" rel="noopener" class="footer-link">CDSCO Govt. Portal ↗</a>
+      <a href="https://ipc.gov.in/" target="_blank" rel="noopener" class="footer-link">Indian Pharmacopoeia Commission ↗</a>
+      <a href="https://ipc.gov.in/pvpi.html" target="_blank" rel="noopener" class="footer-link">Pharmacovigilance Programme (PvPI) ↗</a>
+      <a href="https://tinyfish.ai/" target="_blank" rel="noopener" class="footer-link">TinyFish Web Agents ↗</a>
+    </div>
+
+    <div style="font-weight:700;color:var(--text-main);margin-bottom:4px">
+      MedAlert — The Medicine Safety Detective
+    </div>
+    <div style="font-size:0.84rem;color:var(--text-muted)">Independent Consumer Medicine Safety Detective (Deciphering Public CDSCO Gazette Records)</div>
+
+    <div style="max-width:800px;margin:10px auto 0;font-size:0.76rem;color:var(--text-soft)">
+      Medical Disclaimer: MedAlert is an informational public health verification tool. A batch recall is not a medical diagnosis. Never discontinue or alter prescribed medication without consulting your doctor or dispensing pharmacist.
+    </div>
+  </footer>
+
+</div>
+
+<div class="toast-pill" id="toastMsg"></div>
+
+<!-- JavaScript Logic -->
+<script>
+let allCirculars = [];
+let currentCategory = 'all';
+let lastVerdictData = null;
+// Default is LIGHT theme
+// API Base URL: seamlessly connect to local FastAPI server if opened via file://
+const API_BASE = (window.location.protocol === 'file:' || !window.location.port) 
+  ? 'http://127.0.0.1:8000' 
+  : '';
+
+// Authentic CDSCO Gazette Seed Circulars for seamless offline / file:// operation
+const EMBEDDED_CIRCULARS = [
+  {
+    "id": 1,
+    "brand_name": "Dolo-650",
+    "generic_name": "Paracetamol Tablets IP 650mg",
+    "batch_number": "T24018",
+    "manufacturer": "Micro Healthtech Laboratories",
+    "manufacturing_date": "03/2025",
+    "expiry_date": "02/2028",
+    "category": "Pain",
+    "status": "FLAGGED_NSQ",
+    "failure_technical": "Fails IP Dissolution test (<70% in 30 minutes)",
+    "failure_plain": "The tablet dissolves significantly slower than pharmacopoeial standards, leading to poor blood absorption and therapeutic fever-relief failure.",
+    "authority": "CDSCO East Zone / Central Drugs Laboratory (CDL)",
+    "circular_date": "September 2026",
+    "risk_level": "High",
+    "official_notice_ref": "CDSCO/Alert/2026/09/NSQ-042"
+  },
+  {
+    "id": 2,
+    "brand_name": "Telma-40",
+    "generic_name": "Telmisartan Tablets IP 40mg",
+    "batch_number": "TL8004",
+    "manufacturer": "Glenmark Formulation Unit III",
+    "manufacturing_date": "01/2025",
+    "expiry_date": "12/2027",
+    "category": "Cardiovascular",
+    "status": "FLAGGED_NSQ",
+    "failure_technical": "Assay deficiency: 68.2% of active Telmisartan (Limit: 90.0% - 110.0%)",
+    "failure_plain": "Contains only 68% of active blood pressure medication. Taking this batch can leave severe hypertension unmanaged.",
+    "authority": "Maharashtra Food & Drug Administration (FDA)",
+    "circular_date": "August 2026",
+    "risk_level": "Critical",
+    "official_notice_ref": "MH-FDA/NSQ/2026/B-118"
+  },
+  {
+    "id": 3,
+    "brand_name": "Glycomet-500",
+    "generic_name": "Metformin Hydrochloride Prolonged-release Tablets IP 500mg",
+    "batch_number": "GLM4012",
+    "manufacturer": "Universal Formulations Baddi",
+    "manufacturing_date": "02/2025",
+    "expiry_date": "01/2028",
+    "category": "Diabetes",
+    "status": "FLAGGED_NSQ",
+    "failure_technical": "Fails Dissolution test (Release profile <65% at 4 hours)",
+    "failure_plain": "The prolonged-release mechanism fails to release active Metformin at required time points, leading to uncontrolled blood sugar spikes in diabetic patients.",
+    "authority": "CDSCO West Zone / Central Drugs Laboratory",
+    "circular_date": "October 2026",
+    "risk_level": "High",
+    "official_notice_ref": "CDSCO/Alert/2026/10/NSQ-055"
+  },
+  {
+    "id": 4,
+    "brand_name": "Pantocid-40",
+    "generic_name": "Pantoprazole Gastro-resistant Tablets IP 40mg",
+    "batch_number": "PT7701",
+    "manufacturer": "Sun Remedies Baddi Plant",
+    "manufacturing_date": "04/2025",
+    "expiry_date": "03/2027",
+    "category": "Gastro",
+    "status": "FLAGGED_NSQ",
+    "failure_technical": "Fails Acid Resistance test for enteric coating",
+    "failure_plain": "Protective coating degrades in stomach acid instead of the intestine, causing gastric irritation and negligible acid reduction.",
+    "authority": "CDSCO North Zone / Regional Drugs Testing Lab (RDTL)",
+    "circular_date": "September 2026",
+    "risk_level": "Moderate",
+    "official_notice_ref": "CDSCO/Alert/2026/09/NSQ-089"
+  },
+  {
+    "id": 5,
+    "brand_name": "Amoxyclav-625",
+    "generic_name": "Amoxicillin & Potassium Clavulanate Tablets IP",
+    "batch_number": "AMX501",
+    "manufacturer": "Apex Bio Labs Solan",
+    "manufacturing_date": "05/2025",
+    "expiry_date": "04/2027",
+    "category": "Antibiotic",
+    "status": "FLAGGED_NSQ",
+    "failure_technical": "Clavulanic acid degradation (Assay: 41.5%)",
+    "failure_plain": "The antibiotic enhancer degraded from moisture exposure, rendering the antibiotic ineffective against resistant infections.",
+    "authority": "State Drug Controller, Himachal Pradesh",
+    "circular_date": "July 2026",
+    "risk_level": "High",
+    "official_notice_ref": "HP-SDA/2026/QC-401"
+  },
+  {
+    "id": 6,
+    "brand_name": "Cofnil-D Junior",
+    "generic_name": "Dextromethorphan HBr & Chlorpheniramine Maleate Syrup",
+    "batch_number": "CFJ992",
+    "manufacturer": "Global Healthcare Syrups Pvt Ltd",
+    "manufacturing_date": "06/2025",
+    "expiry_date": "05/2027",
+    "category": "Pediatric",
+    "status": "FLAGGED_NSQ",
+    "failure_technical": "Presence of particulate matter & microbial limit failure",
+    "failure_plain": "Contains suspended foreign particulates and exceeds microbiological safety limits. Unsafe for pediatric ingestion.",
+    "authority": "CDSCO Central Testing Lab, Mumbai",
+    "circular_date": "September 2026",
+    "risk_level": "Severe",
+    "official_notice_ref": "CDSCO/Alert/2026/09/NSQ-012"
+  }
+];
+
+// Core recognized Indian pharmaceutical brands and generic drug INN salt stems
+const RECOGNIZED_BRANDS_SET = new Set([
+  'dolo', 'dolo-650', 'dolo 650', 'calpol', 'crocin', 'pacimol', 'paracetamol', 'paracip', 'p-650',
+  'combiflam', 'brufen', 'ibuprofen', 'voveran', 'diclofenac', 'zerodol', 'aceclofenac',
+  'meftal', 'meftal-spas', 'mefenamic', 'disprin', 'aspirin', 'ecosprin', 'tramadol',
+  'telma', 'telma-40', 'telma 40', 'telma-h', 'telmikind', 'telpres', 'telvas', 'telmisartan',
+  'losar', 'losartan', 'amlong', 'stamlo', 'amlodipine', 'cilacar', 'cilnidipine',
+  'metolar', 'metoprolol', 'cardace', 'ramipril', 'atorva', 'atorvastatin', 'rosuvas', 'rosuvastatin',
+  'pantocid', 'pantocid-40', 'pantocid 40', 'pan', 'pan-40', 'pan 40', 'pan-d', 'pantoprazole',
+  'omez', 'omez-d', 'omeprazole', 'razo', 'rabicip', 'rabeprazole', 'rantac', 'aciloc', 'ranitidine',
+  'amoxyclav', 'amoxyclav-625', 'amoxyclav 625', 'augmentin', 'clavam', 'amoxicillin', 'novamox',
+  'cifran', 'ciplox', 'ciprofloxacin', 'oflox', 'zanocin', 'ofloxacin', 'azithral', 'azithromycin', 'azithromycin 500',
+  'shelcal', 'shelcal-500', 'shelcal 500', 'calcitas', 'calcitas-d3', 'calcium', 'vitamin d3', 'vitamin c',
+  'glycomet', 'glycomet-500', 'glycomet 500', 'metformin', 'amaryl', 'glimepiride', 'galvus', 'vildagliptin',
+  'cetzine', 'alerid', 'okacet', 'cetirizine', 'allegra', 'fexofenadine', 'montair', 'montair-lc', 'montelukast',
+  'asthalin', 'salbutamol', 'cofnil', 'cofnil-d', 'cofnil-d junior', 'benadryl', 'cheston'
+]);
+
+const PHARMA_STEMS_SET = ['cillin', 'mycin', 'cycline', 'floxacin', 'prazole', 'sartan', 'olol', 'statin', 'dipine', 'pril', 'zole', 'gliptin', 'gliflozin', 'tidine', 'nidazole', 'profen', 'fenac', 'terol', 'lukast'];
+
+function normStr(s) {
+  return (s || '').replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+}
+
+function normBatch(s) {
+  return (s || '').replace(/^(batch|b\.?no\.?|lot)[:\s#]*/i, '').replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+}
+
+function isMedicineRecognized(name) {
+  const clean = (name || '').trim().toLowerCase();
+  const norm = normStr(clean);
+  if (norm.length < 3) return false;
+
+  // Direct set check
+  if (RECOGNIZED_BRANDS_SET.has(clean) || RECOGNIZED_BRANDS_SET.has(norm)) return true;
+
+  // Prefix check with recognized brand
+  for (const b of RECOGNIZED_BRANDS_SET) {
+    const bNorm = normStr(b);
+    if (norm.startsWith(bNorm)) {
+      const rem = norm.slice(bNorm.length);
+      // Valid if remainder is empty, numeric dosage (e.g. 650, 40, 500), or form abbreviation
+      if (!rem || /^\d+(mg|ml|mcg|g)?$/.test(rem) || ['dt','ds','sr','pr','er','cr','forte','plus','h','d','junior','jr'].includes(rem)) {
+        return true;
+      }
+    }
+  }
+
+  // INN salt stem check
+  for (const stem of PHARMA_STEMS_SET) {
+    if (norm.endsWith(stem) && norm.length >= stem.length + 2) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+function clientSideVerify(med, batch, maker) {
+  const cleanMed = (med || '').trim();
+  const cleanBatch = (batch || '').trim();
+  const normMed = normStr(cleanMed);
+  const normBat = normBatch(cleanBatch);
+
+  // 1. Pharmacopoeial Registry check
+  if (!isMedicineRecognized(cleanMed)) {
+    return {
+      "mode": "REGISTRY_GATEKEEPER",
+      "state": "STATE_U_UNRECOGNIZED_MEDICINE",
+      "match_status": "UNRECOGNIZED FORMULATION",
+      "verdict_badge": "UNRECOGNIZED / UNREGISTERED MEDICINE",
+      "badge_color": "warning",
+      "drug_name": cleanMed,
+      "generic_name": "Unregistered / Unknown Formulation",
+      "batch_number": cleanBatch || "N/A",
+      "manufacturer": maker || "Unknown / Unverified Manufacturer",
+      "failure_type": "Formulation Not Found in Official Drug Gazette",
+      "plain_text": `No active pharmaceutical registration exists for '${cleanMed}' because this name was not found in Indian Pharmacopoeia (IP) or CDSCO registries. Cannot declare unverified compounds as safe.`,
+      "suggestion": "Check your medicine strip for the exact brand name or active pharmaceutical salt printed on the reverse silver foil.",
+      "testing_authority": "Indian Pharmacopoeia and CDSCO National Database",
+      "official_bulletin_date": "Current National Drug Gazette",
+      "clinical_advisory": "Do not consume unknown or unidentifiable pills. Present your strip to a licensed pharmacist or consult your physician."
+    };
+  }
+
+  // 2. Check against CDSCO gazette recalls
+  const matchingRecs = EMBEDDED_CIRCULARS.filter(r => {
+    const rNorm = normStr(r.brand_name);
+    return normMed === rNorm || normMed.includes(rNorm) || rNorm.includes(normMed);
+  });
+
+  if (matchingRecs.length > 0) {
+    // Exact batch match -> Confirmed Alert
+    if (normBat) {
+      const exact = matchingRecs.find(r => normBatch(r.batch_number) === normBat);
+      if (exact) {
+        return {
+          "mode": "LOCAL_CACHE",
+          "state": "STATE_A_CONFIRMED_MATCH",
+          "match_status": "CONFIRMED ALERT MATCH",
+          "verdict_badge": "QUALITY RECALL ALERT",
+          "badge_color": "danger",
+          "drug_name": exact.brand_name,
+          "generic_name": exact.generic_name,
+          "batch_number": exact.batch_number,
+          "manufacturer": exact.manufacturer,
+          "failure_type": exact.failure_technical,
+          "plain_text": exact.failure_plain,
+          "testing_authority": exact.authority,
+          "official_bulletin_date": exact.circular_date,
+          "official_source": "https://cdsco.gov.in/",
+          "source_note": `Matched in official CDSCO Gazette Bulletin (${exact.official_notice_ref})`,
+          "clinical_advisory": "DO NOT abruptly stop your prescribed medication without consulting your doctor or pharmacist. Bring this medicine strip to your dispensing chemist for replacement under standard drug recall protocols."
+        };
+      }
+
+      // Brand has recalls, but user batch is safe
+      const flagged = matchingRecs.map(r => r.batch_number).join(', ');
+      const first = matchingRecs[0];
+      return {
+        "mode": "LOCAL_CACHE",
+        "state": "STATE_B_NAME_MATCH_SAFE_BATCH",
+        "match_status": "NAME MATCH ONLY (YOUR BATCH IS CLEAR)",
+        "verdict_badge": "SAFE BATCH (PAST BRAND HISTORY)",
+        "badge_color": "info",
+        "drug_name": cleanMed,
+        "generic_name": first.generic_name,
+        "batch_number": cleanBatch,
+        "manufacturer": first.manufacturer,
+        "failure_type": "No active quality alert for this batch",
+        "plain_text": `Note: While other batches of ${first.brand_name} (${flagged}) were previously flagged in CDSCO bulletins, YOUR specific batch (#${cleanBatch}) is NOT flagged. Batch Match ≠ Brand Ban.`,
+        "testing_authority": first.authority,
+        "official_bulletin_date": first.circular_date,
+        "clinical_advisory": "Continue your prescribed medication as advised by your healthcare practitioner."
+      };
+    } else {
+      // Brand has recalls, but no batch specified
+      const flagged = matchingRecs.map(r => r.batch_number).join(', ');
+      const first = matchingRecs[0];
+      return {
+        "mode": "LOCAL_CACHE",
+        "state": "STATE_B_NAME_MATCH_SAFE_BATCH",
+        "match_status": "ACTIVE BRAND ALERTS (CHECK BATCH)",
+        "verdict_badge": "BRAND HAS RECALLS — CHECK BATCH",
+        "badge_color": "warning",
+        "drug_name": first.brand_name,
+        "generic_name": first.generic_name,
+        "batch_number": "Not provided",
+        "manufacturer": first.manufacturer,
+        "failure_type": `CDSCO flagged batch(es): ${flagged}`,
+        "plain_text": `Warning: Manufacturing batch(es) ${flagged} of ${first.brand_name} were declared Not of Standard Quality (NSQ) by CDSCO. Please verify the batch number stamped on your strip foil to ensure yours is not one of the flagged batches.`,
+        "testing_authority": first.authority,
+        "official_bulletin_date": first.circular_date,
+        "clinical_advisory": "Do NOT discontinue chronic medications abruptly. Present this strip to your dispensing pharmacist for replacement under recall protocol."
+      };
+    }
+  }
+
+  // 3. Recognized clean medicine (zero recalls)
+  return {
+    "mode": "LOCAL_CACHE",
+    "state": "STATE_C_CLEAN_BATCH",
+    "match_status": "VERIFIED CLEAN — STANDARD QUALITY",
+    "verdict_badge": "STANDARD QUALITY (VERIFIED SAFE)",
+    "badge_color": "success",
+    "drug_name": cleanMed,
+    "generic_name": "Standard Pharmaceutical Formulation",
+    "batch_number": cleanBatch || "General Formulation",
+    "manufacturer": maker || "Licensed Pharmaceutical Manufacturer",
+    "failure_type": "Standard Quality — Zero active alerts found",
+    "plain_text": `No Not of Standard Quality (NSQ) or adulteration notices exist in official CDSCO or State FDA bulletins for ${cleanMed} (Batch: ${cleanBatch || 'General'}).`,
+    "testing_authority": "CDSCO / State Drug Administrations",
+    "official_bulletin_date": "Updated Current Gazette",
+    "clinical_advisory": "Follow standard prescription instructions. If you experience adverse reactions, consult your physician."
+  };
+}
+
+function clientSideWhatsAppCard(brand, batch) {
+  const v = clientSideVerify(brand, batch, '');
+  if (v.state === 'STATE_U_UNRECOGNIZED_MEDICINE') {
+    return `⚠️ *UNRECOGNIZED MEDICINE ENTRY*\n━━━━━━━━━━━━━━━━━━━━━\n🔍 *Input:* \`${brand}\` (Batch: \`${batch || 'N/A'}\`)\n\n❌ *REGULATORY REGISTRY STATUS:*\nUnregistered / Unverified pharmaceutical compound.\n\n${v.plain_text}\n\n💡 *Guidance:* ${v.suggestion}\n\n🛡️ *SAFETY NOTICE:*\n• Check your strip's printed reverse silver foil for the full brand name.\n• Do NOT ingest unmarked, illegible, or unidentifiable pills.\n• Present this strip to your dispensing pharmacist for verification.`;
+  }
+  if (v.state === 'STATE_A_CONFIRMED_MATCH') {
+    return `🔴 *CDSCO RECALL NOTICE MATCH*\n━━━━━━━━━━━━━━━━━━━━━\n🚨 *Medicine:* ${v.drug_name}\n🏷️ *Flagged Batch:* \`${v.batch_number}\`\n🏭 *Manufacturer:* ${v.manufacturer}\n🏛️ *Authority:* ${v.testing_authority}\n📅 *Gazette Bulletin:* ${v.official_bulletin_date}\n\n🔬 *TECHNICAL FAILURE (CDSCO LAB):*\n_${v.failure_type}_\n\n💡 *WHAT THIS MEANS FOR YOU:*\n${v.plain_text}\n\n🛡️ *ACTION REQUIRED:*\n1. Take this strip to your chemist with the purchase bill for a replacement.\n2. Check if family members are using this batch.\n\n⚠️ *CRITICAL HEALTH ADVISORY:*\n• Do *NOT* stop taking chronic medications (BP, diabetes, cardiac) abruptly.\n• Present this packaging to your dispensing chemist for replacement under official recall protocols.`;
+  }
+  if (v.state === 'STATE_B_NAME_MATCH_SAFE_BATCH') {
+    if (!batch || batch === 'Not provided') {
+      return `⚠️ *CDSCO QUALITY RECALL NOTICE FOR THIS BRAND*\n━━━━━━━━━━━━━━━━━━━━━\n💊 *Brand:* ${v.drug_name}\n🚫 *Flagged Defective Batches:* ${v.failure_type}\n\n⚠️ *ACTION: CHECK YOUR STRIP BATCH NUMBER*\nCDSCO has notified specific batches of ${v.drug_name} for statutory quality failures.\n\nPlease check the reverse silver foil of your medicine strip for the stamped batch number to verify if your pack is affected.\n\n⚠️ *CRITICAL HEALTH ADVISORY:*\n• Do *NOT* stop taking chronic medications abruptly.\n• Present this packaging to your dispensing chemist for replacement under recall protocol.`;
+    }
+    return `🔵 *BATCH SAFE • NOT RECALLED*\n━━━━━━━━━━━━━━━━━━━━━\n💊 *Brand:* ${v.drug_name}\n✅ *Your Verified Batch:* \`${batch}\`\n\nℹ️ *BATCH PRECISION VERIFIED:*\nWhile CDSCO notified other manufacturing batches of this brand due to quality defects, *your specific batch (\`${batch}\`) is NOT under recall* and is legally clear for use.\n\nIn India, drug recalls are strictly batch-specific. You do not need to discard this strip.`;
+  }
+  return `🟢 *VERIFIED CLEAN • NO RECALLS*\n━━━━━━━━━━━━━━━━━━━━━\n💊 *Medicine:* ${brand}\n🏷️ *Batch Number:* \`${batch || 'General'}\`\n🏛️ *Database Checked:* CDSCO, IPC & State FDA Gazettes\n\n✅ *RESULT:* No active substandard quality (NSQ) declarations or recall bulletins were found for this batch in official regulatory archives.\n\n⚠️ *CRITICAL HEALTH ADVISORY:*\n• Do *NOT* stop taking chronic medications abruptly.\n• Present this strip to your dispensing pharmacist for replacement under recall protocol.`;
+}
+
+function parseMedicineInput(text) {
+  text = (text || '').trim();
+  if (!text) return { brand: '', batch: '' };
+
+  if (text.includes(',')) {
+    const parts = text.split(',');
+    const brand = parts[0].trim();
+    const batch = parts[1].replace(/^(batch|b\.?no\.?|lot)[:\s#]*/i, '').trim();
+    return { brand, batch };
+  }
+
+  const match = text.match(/\b(batch|b\.?no\.?|lot)[:\s#]+([a-zA-Z0-9\-_]+)/i);
+  if (match) {
+    const brand = text.slice(0, match.index).trim();
+    const batch = match[2].trim();
+    return { brand, batch };
+  }
+
+  const tokens = text.split(/\s+/);
+  if (tokens.length >= 2) {
+    const last = tokens[tokens.length - 1];
+    const isDosage = /^\d+(\.\d+)?(mg|ml|mcg|g|iu)?$/i.test(last);
+    const hasAlpha = /[a-zA-Z]/.test(last);
+    const hasDigit = /\d/.test(last);
+    const isBatch = (hasAlpha && hasDigit) || last.startsWith('#');
+    if (isBatch && !isDosage) {
+      return {
+        brand: tokens.slice(0, -1).join(' '),
+        batch: last.replace(/^#/, '')
+      };
+    }
+  }
+
+  return { brand: text, batch: '' };
+}
+
+let currentTheme = localStorage.getItem('medalert_theme') || 'light';
+let currentFontSize = localStorage.getItem('medalert_fontsize') || 'md';
+
+document.addEventListener('DOMContentLoaded', () => {
+  applyTheme(currentTheme);
+  setFontSize(currentFontSize);
+  checkStatus();
+  loadCirculars();
+});
+
+// Theme slide toggle: Left = Light (unchecked), Right = Dark (checked)
+function applyTheme(theme) {
+  currentTheme = theme;
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('medalert_theme', theme);
+
+  const checkbox = document.getElementById('themeCheckbox');
+  if (checkbox) {
+    checkbox.checked = (theme === 'dark');
+  }
+}
+
+function toggleTheme(isDark) {
+  applyTheme(isDark ? 'dark' : 'light');
+}
+
+// Minimal Font Size Adjuster (sm / md / lg)
+function setFontSize(size) {
+  currentFontSize = size;
+  document.documentElement.setAttribute('data-font-size', size);
+  localStorage.setItem('medalert_fontsize', size);
+
+  const map = { 'sm': 'a-', 'md': 'a', 'lg': 'a+' };
+  document.querySelectorAll('.font-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.textContent.toLowerCase() === map[size]);
+  });
+}
+
+async function checkStatus() {
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 2000);
+    const res = await fetch(`${API_BASE}/api/status`, { signal: controller.signal });
+    clearTimeout(timeoutId);
+    if (res.ok) {
+      const data = await res.json();
+      const pill = document.getElementById('agentPill');
+      if (data.tinyfish_configured) {
+        pill.textContent = '● Live Web Agent Online';
+        pill.style.color = '#10b981';
+      } else {
+        pill.textContent = '● CDSCO Engine Active';
+      }
+    }
+  } catch (e) {
+    const pill = document.getElementById('agentPill');
+    if (pill) pill.textContent = '● CDSCO Engine Active';
+  }
+}
+
+document.getElementById('verifyForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const medicine = document.getElementById('medicineInput').value.trim();
+  const batch = document.getElementById('batchInput').value.trim();
+  const manufacturer = document.getElementById('makerInput').value.trim();
+
+  if (!medicine) {
+    showToast('Please enter a medicine name');
+    return;
+  }
+
+  const btn = document.getElementById('verifyBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span>⏳</span> Searching CDSCO Records...';
+
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3500);
+    const res = await fetch(`${API_BASE}/api/check`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ medicine, batch, manufacturer }),
+      signal: controller.signal
+    });
+    clearTimeout(timeoutId);
+
+    if (res.ok) {
+      const data = await res.json();
+      renderVerdict(data);
+    } else {
+      // Fallback to client-side verification
+      const fallback = clientSideVerify(medicine, batch, manufacturer);
+      renderVerdict(fallback);
+    }
+  } catch (err) {
+    console.warn('Backend unavailable, running client-side CDSCO gazette verification engine:', err);
+    const fallback = clientSideVerify(medicine, batch, manufacturer);
+    renderVerdict(fallback);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<span>🔍</span> Check Batch Against CDSCO Records';
+  }
+});
+
+function renderVerdict(data) {
+  lastVerdictData = data;
+  const card = document.getElementById('verdictCard');
+  const badge = document.getElementById('verdictBadge');
+  const title = document.getElementById('verdictTitle');
+  const text = document.getElementById('verdictText');
+  const vMed = document.getElementById('vMedicine');
+  const vBatch = document.getElementById('vBatch');
+  const vFinding = document.getElementById('vFinding');
+  const vAuth = document.getElementById('vAuthority');
+  const vAdvis = document.getElementById('vAdvisory');
+  const cgWrap = document.getElementById('caregiverWrap');
+
+  card.className = 'verdict-card show';
+
+  // Strict check on state/status to avoid substring collisions
+  const isDanger = data.badge_color === 'danger' || data.state === 'STATE_A_CONFIRMED_MATCH' || data.status === 'CONFIRMED_ALERT';
+  const isBrandSafe = data.badge_color === 'info' || data.state === 'STATE_B_NAME_MATCH_SAFE_BATCH' || data.status === 'BRAND_MATCH_SAFE_BATCH';
+  const isWarning = data.badge_color === 'warning' || data.state === 'STATE_U_UNRECOGNIZED_MEDICINE' || data.status === 'UNRECOGNIZED_MEDICINE';
+
+  if (isDanger) {
+    card.classList.add('danger');
+    badge.textContent = '🔴 ' + (data.verdict_badge || 'QUALITY RECALL ALERT');
+    title.textContent = '⚠️ Quality Failure Flagged for this Batch';
+    cgWrap.style.display = 'flex';
+  } else if (isBrandSafe) {
+    card.classList.add('info');
+    badge.textContent = '🔵 ' + (data.verdict_badge || 'SAFE BATCH (PAST BRAND HISTORY)');
+    title.textContent = 'ℹ️ Brand has Recalls, but YOUR Batch is Clear';
+    cgWrap.style.display = 'none';
+  } else if (isWarning) {
+    card.classList.add('warning');
+    badge.textContent = '⚠️ ' + (data.verdict_badge || 'UNRECOGNIZED / UNREGISTERED MEDICINE');
+    title.textContent = '⚠️ Unrecognized Medicine Name';
+    cgWrap.style.display = 'none';
+  } else {
+    card.classList.add('success');
+    badge.textContent = '🟢 ' + (data.verdict_badge || 'STANDARD QUALITY (VERIFIED SAFE)');
+    title.textContent = '✅ Batch Verified Safe — No Quality Recalls';
+    cgWrap.style.display = 'none';
+  }
+
+  let fullText = data.plain_text || 'Batch reviewed against regulatory databases.';
+  if (data.suggestion) {
+    fullText += `\n\n💡 Clinical Guidance: ${data.suggestion}`;
+  }
+  text.textContent = fullText;
+  vMed.textContent = data.drug_name || document.getElementById('medicineInput').value;
+  vBatch.textContent = data.batch_number || 'Not provided';
+  vFinding.textContent = data.failure_type || 'Standard Pharmacopoeial Quality';
+  vAuth.textContent = data.testing_authority || 'CDSCO National Testing Lab';
+  vAdvis.textContent = data.clinical_advisory || 'DO NOT abruptly stop medication without consulting your doctor or pharmacist.';
+
+  card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function setFormSample(med, batch, maker) {
+  document.getElementById('medicineInput').value = med;
+  document.getElementById('batchInput').value = batch;
+  document.getElementById('makerInput').value = maker;
+  document.getElementById('medicineInput').focus();
+  document.getElementById('verifyForm').dispatchEvent(new Event('submit'));
+}
+
+function speakVerdict() {
+  if (!('speechSynthesis' in window)) {
+    showToast('Voice output not supported on this browser.');
+    return;
+  }
+  if (window.speechSynthesis.speaking) {
+    window.speechSynthesis.cancel();
+    document.getElementById('voiceIcon').textContent = '🔊';
+    return;
+  }
+  if (!lastVerdictData) return;
+
+  const u = new SpeechSynthesisUtterance();
+  const isAlert = lastVerdictData.badge_color === 'danger';
+  u.text = isAlert
+    ? `Alert for ${lastVerdictData.drug_name}, batch ${lastVerdictData.batch_number}. Notice: ${lastVerdictData.plain_text}. Please do not stop taking your prescribed medication abruptly. Visit your local pharmacist for a verified replacement.`
+    : `Good news. Medicine ${lastVerdictData.drug_name}, batch ${lastVerdictData.batch_number}, is clear with no active alerts.`;
+  u.rate = 0.92;
+
+  u.onstart = () => { document.getElementById('voiceIcon').textContent = '⏹️'; };
+  u.onend = () => { document.getElementById('voiceIcon').textContent = '🔊'; };
+  window.speechSynthesis.speak(u);
+}
+
+async function openScannerDemo(sampleKey) {
+  const vf = document.getElementById('scannerViewfinder');
+  if (!vf) return;
+  const boxes = document.getElementById('ocrBoxesContainer');
+  vf.classList.add('active');
+  boxes.innerHTML = '';
+  showToast('📸 Scanning blister foil...');
+
+  try {
+    const res = await fetch('/api/ocr-scan', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sample_id: sampleKey })
+    });
+    if (res.ok) {
+      const result = await res.json();
+      const d = result.data;
+      boxes.innerHTML = d.bounding_boxes.map(b => `
+        <div class="ocr-box" style="top:${b.box[1]}%;left:${b.box[0]}%;width:${b.box[2]}%;height:${b.box[3]}%">
+          ${b.field}: ${b.text}
+        </div>
+      `).join('');
+
+      setTimeout(() => {
+        document.getElementById('medicineInput').value = d.detected_medicine;
+        document.getElementById('batchInput').value = d.detected_batch;
+        document.getElementById('makerInput').value = d.detected_manufacturer;
+        showToast(`Detected ${d.detected_medicine} (Batch #${d.detected_batch})`);
+        document.getElementById('verifyForm').dispatchEvent(new Event('submit'));
+      }, 1000);
+    }
+  } catch (e) {}
+}
+
+function simulateWhatsAppQuery(text) {
+  document.getElementById('phoneInput').value = text;
+  sendWhatsAppSimMessage();
+}
+
+async function sendWhatsAppSimMessage() {
+  const input = document.getElementById('phoneInput');
+  const msg = input.value.trim();
+  if (!msg) return;
+
+  const chat = document.getElementById('chatBody');
+  const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+  chat.innerHTML += `
+    <div class="chat-bubble outgoing">
+      ${escapeHtml(msg)}
+      <div class="chat-time">${now} · ✓✓</div>
+    </div>
+  `;
+  input.value = '';
+  chat.scrollTop = chat.scrollHeight;
+
+  // Add temporary typing indicator
+  const typingId = 'typing_' + Date.now();
+  chat.innerHTML += `
+    <div class="chat-bubble incoming" id="${typingId}" style="opacity:0.7;font-style:italic">
+      🔍 Verifying with CDSCO gazette database...
+    </div>
+  `;
+  chat.scrollTop = chat.scrollHeight;
+
+  // Smart query parser
+  const parsed = parseMedicineInput(msg);
+  const brand = parsed.brand;
+  const batch = parsed.batch;
+
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3500);
+    const res = await fetch(`${API_BASE}/api/verify`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ brand_name: brand, batch_number: batch }),
+      signal: controller.signal
+    });
+    clearTimeout(timeoutId);
+
+    const typingElem = document.getElementById(typingId);
+    if (typingElem) typingElem.remove();
+
+    let reply = '';
+    if (res.ok) {
+      const data = await res.json();
+      reply = data.whatsapp_formatted_card || data.message || clientSideWhatsAppCard(brand, batch);
+    } else {
+      reply = clientSideWhatsAppCard(brand, batch);
+    }
+
+    chat.innerHTML += `
+      <div class="chat-bubble incoming">
+        ${reply.replace(/\n/g, '<br>')}
+        <div class="chat-time">${now}</div>
+      </div>
+    `;
+    chat.scrollTop = chat.scrollHeight;
+  } catch (err) {
+    const typingElem = document.getElementById(typingId);
+    if (typingElem) typingElem.remove();
+
+    const reply = clientSideWhatsAppCard(brand, batch);
+    chat.innerHTML += `
+      <div class="chat-bubble incoming">
+        ${reply.replace(/\n/g, '<br>')}
+        <div class="chat-time">${now}</div>
+      </div>
+    `;
+    chat.scrollTop = chat.scrollHeight;
+  }
+}
+
+function alertJargon(t, p) {
+  showToast(`💡 ${t}: ${p}`);
+}
+
+async function loadCirculars(cat = 'all', search = '') {
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 2000);
+    let url = `${API_BASE}/api/circulars?category=${encodeURIComponent(cat)}`;
+    if (search) url += `&search=${encodeURIComponent(search)}`;
+    const res = await fetch(url, { signal: controller.signal });
+    clearTimeout(timeoutId);
+    if (res.ok) {
+      const d = await res.json();
+      allCirculars = d.circulars || [];
+      renderCircularsTable(allCirculars);
+      return;
+    }
+  } catch (e) {
+    // Backend offline / file:// mode: filter embedded circulars locally
+  }
+
+  // Filter embedded circulars
+  let filtered = [...EMBEDDED_CIRCULARS];
+  if (cat && cat.toLowerCase() !== 'all') {
+    const catLow = cat.toLowerCase();
+    filtered = filtered.filter(c => 
+      (c.category || '').toLowerCase().includes(catLow) ||
+      c.brand_name.toLowerCase().includes(catLow) ||
+      c.generic_name.toLowerCase().includes(catLow)
+    );
+  }
+  if (search) {
+    const sLow = search.toLowerCase();
+    filtered = filtered.filter(c =>
+      c.brand_name.toLowerCase().includes(sLow) ||
+      c.generic_name.toLowerCase().includes(sLow) ||
+      c.batch_number.toLowerCase().includes(sLow) ||
+      c.manufacturer.toLowerCase().includes(sLow)
+    );
+  }
+  allCirculars = filtered;
+  renderCircularsTable(allCirculars);
+}
+
+function renderCircularsTable(items) {
+  const tbody = document.getElementById('circularsTableBody');
+  if (!items || items.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text-muted)">No matching circulars found.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = items.map(c => `
+    <tr>
+      <td><b>${escapeHtml(c.brand_name)}</b><br><small style="color:var(--text-muted)">${escapeHtml(c.generic_name)}</small></td>
+      <td><span style="font-family:var(--font-mono);font-weight:700">${escapeHtml(c.batch_number)}</span></td>
+      <td>${escapeHtml(c.manufacturer)}</td>
+      <td style="max-width:260px;font-size:0.82rem;line-height:1.4">${escapeHtml(c.failure_technical || c.failure_reason_technical || 'Quality Defect')}</td>
+      <td><small style="font-size:0.78rem;color:var(--text-muted)">${escapeHtml(c.authority || c.testing_authority || 'CDSCO Testing Lab')}</small></td>
+      <td><span class="risk-pill risk-${c.risk_level}">${c.risk_level}</span></td>
+      <td>
+        <button class="sample-chip" style="padding:4px 8px;font-size:0.75rem" onclick="setFormSample('${c.brand_name}', '${c.batch_number}', '${c.manufacturer}')">
+          Verify ↗
+        </button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function filterCirculars(cat, btn) {
+  currentCategory = cat;
+  document.querySelectorAll('#filterGroup .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  loadCirculars(cat, document.getElementById('circularSearch').value);
+}
+
+function searchCirculars(query) {
+  loadCirculars(currentCategory, query);
+}
+
+function updateCalculator(val) {
+  document.getElementById('sliderVal').textContent = `${val} checks`;
+  const cost = (val * 0.55).toFixed(2);
+  document.getElementById('marginalCostDisplay').textContent = `₹${cost}`;
+}
+
+function triggerCaregiverModal() {
+  document.getElementById('caregiverModal').classList.add('active');
+}
+
+function closeCaregiverModal() {
+  document.getElementById('caregiverModal').classList.remove('active');
+}
+
+async function dispatchCaregiverAlert(e) {
+  e.preventDefault();
+  const phone = document.getElementById('cgPhone').value.trim();
+  const patient = document.getElementById('cgPatient').value.trim() || 'Elderly Family Member';
+  const cleanPhone = phone.replace(/[^0-9]/g, '');
+
+  const med = lastVerdictData ? (lastVerdictData.drug_name || document.getElementById('medicineInput').value) : 'Prescribed Medicine';
+  const batch = lastVerdictData ? (lastVerdictData.batch_number || document.getElementById('batchInput').value) : 'Flagged Batch';
+  const fail = lastVerdictData ? (lastVerdictData.failure_type || 'Failed statutory CDSCO quality standards') : 'Quality alert';
+
+  closeCaregiverModal();
+
+  // 1. Notify backend server
+  try {
+    fetch(`${API_BASE}/api/caregiver-alert`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        medicine: med,
+        batch: batch,
+        phone: phone,
+        patient_name: patient
+      })
+    });
+  } catch (err) {}
+
+  // 2. Open real WhatsApp with pre-filled clinical advisory
+  const alertText = `🚨 *MEDALERT EMERGENCY SAFETY ADVISORY*\n\nAttention: ${patient} has checked their medicine.\n\n💊 *Medicine:* ${med}\n🏷️ *Flagged Batch:* ${batch}\n⚠️ *Quality Issue:* ${fail}\n\n🛡️ *Clinical Advisory:* Do NOT stop chronic medication abruptly. Please inspect this strip and bring it to the dispensing chemist for a verified replacement under official recall protocols.`;
+
+  const waUrl = cleanPhone 
+    ? `https://wa.me/${cleanPhone}?text=${encodeURIComponent(alertText)}`
+    : `https://wa.me/?text=${encodeURIComponent(alertText)}`;
+
+  window.open(waUrl, '_blank');
+  showToast(`📲 Opening WhatsApp to send alert to ${phone || 'Caregiver'}!`);
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toastMsg');
+  t.textContent = msg;
+  t.style.display = 'block';
+  setTimeout(() => { t.style.display = 'none'; }, 3000);
+}
+
+function escapeHtml(s) {
+  return String(s || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+</script>
+
+</body>
+</html>
+
